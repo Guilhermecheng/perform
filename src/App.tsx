@@ -1,24 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
+import { FormEvent, useState } from 'react';
 import './App.css';
+import { SearchResults } from './components/SearchResults';
 
 function App() {
+  const [search, setSearch] = useState('');
+  const [results, setResults] = useState([]);
+
+  async function handleSearch(event: FormEvent) {
+    event.preventDefault();
+
+    if(!search.trim()) {
+      return;
+    }
+
+    const response = await fetch(`http://localhost:3333/products?q=${search}`)
+    const data = await response.json()
+
+    setResults(data);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Search</h1>
+
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)} 
+        />
+
+        <button type="submit">Buscar</button>
+      </form>
+
+      <SearchResults results={results} />
     </div>
   );
 }

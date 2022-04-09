@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useCallback, useState } from 'react';
 import './App.css';
 import { SearchResults } from './components/SearchResults';
 
@@ -19,6 +19,11 @@ function App() {
     setResults(data);
   }
 
+  // igualdade referencial
+  const onAddToWishList = useCallback(async (id: number) => {
+    console.log(id)
+  }, [])
+
   return (
     <div>
       <h1>Search</h1>
@@ -33,7 +38,7 @@ function App() {
         <button type="submit">Buscar</button>
       </form>
 
-      <SearchResults results={results} />
+      <SearchResults results={results} onAddToWishList={onAddToWishList} />
     </div>
   );
 }

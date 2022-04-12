@@ -1,19 +1,37 @@
-import { memo } from 'react';
+import { memo, useState, lazy } from 'react';
+// import { AddProductToWishList } from './AddProductToWishList';
+
+// lazy no React é a mesma coisa de dynamic no Next
+const AddProductToWishListC = lazy(() => {
+    return import('./AddProductToWishList').then(mod => ({
+        default: mod.AddProductToWishList
+    }))
+})
 
 interface ProductItemProps {
     product: {
         id: number;
         price: number;
+        priceFormatted: string;
         title: string;
     }
     onAddToWishList: (id: number) => void;
 }
 
 export function ProductItemComponent({ product, onAddToWishList }: ProductItemProps) {
+    const [isAddingToWishList, setIsAddingToWishList] = useState(false);
+
     return (
         <div>
-            { product.title } - <strong>{ product.price }</strong>
-            <button onClick={() => onAddToWishList(product.id)} >Add to Wishlist</button>
+            { product.title } - <strong>{ product.priceFormatted }</strong>
+            <button onClick={() => setIsAddingToWishList(true)}>Adicionar aos favoritos</button>
+
+            { isAddingToWishList && (
+                <AddProductToWishListC
+                    onAddToWishList={ () => onAddToWishList(product.id) }
+                    onRequestClose={ () => setIsAddingToWishList(false) }
+                />
+            )}
         </div>
     )
 }
